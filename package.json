@@ -1,5 +1,5 @@
 {
-  "name": "node-to-do-app",
+  "name": "node-to-do-cli-app",
   "version": "0.0.2",
   "description": "A simple Node To-Do app",
   "main": "app.js",
