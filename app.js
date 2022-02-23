@@ -1,55 +1,55 @@
 require('colors');
-const {inquirerMenu, pause, leerInput, listadoTareasBorrar, confirmar, listarTareasChecklist} = require('./helpers/inquirer');
-const Tareas = require('./models/tareas');
+const {inquirerMenu, pause, readInput, readTaskToRemove, confirm, getTasksAsChecklist} = require('./helpers/inquirer');
+const TaskManager = require('./models/taskManager');
 const {save, read} = require('./helpers/repository');
 
 const main = async() => {
     
     let opt;
-    const tareas = new Tareas(read());
+    const taskManager = new TaskManager(read());
 
     do {
         opt = await inquirerMenu();
 
         switch(opt) {
             case 1: 
-                const desc = await leerInput('Descripcion:');
-                tareas.crearTarea(desc);
+                const desc = await readInput('Description of your task:');
+                taskManager.makeTask(desc);
             break;
             case 2:
-                tareas.printTaskList(tareas.listarArr);
+                taskManager.printTaskList(taskManager.listAsArray);
             break;
             case 3:
-                tareas.printCompletedTasks();
+                taskManager.printCompletedTasks();
             break;
             case 4:
-                tareas.printPendingTasks();
+                taskManager.printPendingTasks();
             break;
             case 5:
-                const tasks = tareas.getTasksByCompleteStatus(tareas.PENDING);
+                const tasks = taskManager.getTasksByCompleteStatus(taskManager.PENDING_TASK);
                 if (!tasks.length) {
-                    console.log('No hay tareas pendientes!');
+                    console.log('You have no pending tasks!');
                 } else {
-                    const ids = await listarTareasChecklist(tasks);
+                    const ids = await getTasksAsChecklist(tasks);
                     if (ids.length) {
-                        tareas.completar(ids);
-                        console.log('Tarea(s) completadas!');
+                        taskManager.completeBatch(ids);
+                        console.log('Completed task(s)!');
                     }
                 }
             break;
             case 6:
-                const id = await listadoTareasBorrar(tareas.listarArr);
+                const id = await readTaskToRemove(taskManager.listAsArray);
                 if (id !== 0) {
-                    const ok = await confirmar('Estás seguro?');
+                    const ok = await confirm('Are you sure?');
                     if (ok) {
-                        tareas.borrarTarea(id);
-                        console.log('Tarea borrada!');
+                        taskManager.deleteTask(id);
+                        console.log('Task deleted!');
                     }
                 }
             break;
         }
 
-        save(tareas.listarArr);
+        save(taskManager.listAsArray);
         
         await pause();
     } while(opt !== 0)

@@ -1,7 +1,7 @@
 {
-  "name": "tasker",
-  "version": "0.0.1",
-  "description": "Tasker - Section 4",
+  "name": "node-to-do-app",
+  "version": "0.0.2",
+  "description": "A simple Node To-Do app",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
